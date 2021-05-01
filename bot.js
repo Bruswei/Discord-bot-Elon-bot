@@ -11,8 +11,11 @@ client.on('ready', () => {
         console.log(`Bot is logged on ${guild.name} with id ${guild.id}`);
     });
 
-    const name = "TSLA: 710,00 & BTC: 57454";
-    changeGuildName(name);
+    // function runs every 10 sec
+    setInterval(() => {
+        const name = "TSLA: 710,00 & BTC: 57454 & GME: 174.40";
+        changeGuildName(name);
+    }, 10000);
 
 });
 
