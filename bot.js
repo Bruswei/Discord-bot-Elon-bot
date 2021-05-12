@@ -15,17 +15,8 @@ client.on('ready', () => {
 
     // function runs every 10 sec
     setInterval(() => {
-        // Fetching stock prices
-        const tsla = yahooStockPrice.getCurrentPrice('TSLA');
-        const btc = fetch('https://blockchain.info/tobtc?currency=USD&value=500')
-            .then(response => response.text());
-        const doge = fetch('https://sochain.com//api/v2/get_price/DOGE/USD')
-            .then(response => response.text())
-            .then(res => JSON.parse(res));
-        Promise.all([tsla, btc, doge]).then(price => {
-                var doge = parseFloat(price[2].data.prices[0].price);
-                
-                var name = `TSLA: ${price[0]} BTC: ${(500/price[1]).toFixed(2)} DOGE: ${doge.toFixed(2)}`;
+        getPromises().then(price => {
+                var name = `TSLA: ${price[0]} BTC: ${price[1]} DOGE: ${price[2]}`;
                 changeGuildName(name);
         });
     }, 5000);
@@ -42,4 +33,18 @@ function changeGuildName(name) {
     .then(guild => {
         console.log(`Server name set to ${guild.name}`)
     });
+}
+
+// Function to fetch stock and crypto prices and calculate 
+function getPromises() {
+    const tsla = yahooStockPrice.getCurrentPrice('TSLA');
+    const btc = fetch('https://blockchain.info/tobtc?currency=USD&value=500')
+        .then(response => response.text())
+        .then(price => (500/price).toFixed(2));
+    const doge = fetch('https://sochain.com//api/v2/get_price/DOGE/USD')
+        .then(response => response.text())
+        .then(res => JSON.parse(res))
+        .then(res =>  parseFloat(res.data.prices[0].price).toFixed(2));
+
+    return Promise.all([tsla, btc, doge])
 }
